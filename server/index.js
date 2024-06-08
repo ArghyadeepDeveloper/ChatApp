@@ -2,9 +2,10 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import connectDB from "./database/connection.js";
-import userRoutes from "./routes/UserRoutes.js";
+import { userAuthRoutes, userUnauthRoutes } from "./routes/UserRoutes.js";
 import { validationError } from "./middlewares/ValidationError.js";
 import dotenv from "dotenv";
+import verifyToken from "./middlewares/verifyToken.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -36,8 +37,12 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-//routes
-app.use("/users", userRoutes);
+// unauth routes
+app.use("/users", userUnauthRoutes);
+
+// auth routes
+app.use(verifyToken);
+app.use("/users", userAuthRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

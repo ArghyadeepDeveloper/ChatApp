@@ -1,11 +1,12 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-import { registerUser } from "../controllers/UserControllers.js";
+import { loginUser, registerUser } from "../controllers/UserControllers.js";
 import { validationError } from "../middlewares/ValidationError.js";
 
-const userRoutes = express.Router();
+const userUnauthRoutes = express.Router();
+const userAuthRoutes = express.Router();
 
-userRoutes.post(
+userUnauthRoutes.post(
   "/register",
 
   [
@@ -21,4 +22,6 @@ userRoutes.post(
   registerUser
 );
 
-export default userRoutes;
+userUnauthRoutes.post("/login", loginUser);
+
+export { userUnauthRoutes, userAuthRoutes };

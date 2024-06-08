@@ -1,5 +1,6 @@
 import User from "../models/Usermodel.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res, next) => {
   try {
@@ -27,5 +28,32 @@ export const registerUser = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const loginUser = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    // Compare the provided password with the hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid  password" });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
