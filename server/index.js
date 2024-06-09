@@ -6,6 +6,7 @@ import { userAuthRoutes, userUnauthRoutes } from "./routes/UserRoutes.js";
 import { validationError } from "./middlewares/ValidationError.js";
 import dotenv from "dotenv";
 import verifyToken from "./middlewares/verifyToken.js";
+import chatRoomRoutes from "./routes/ChatRoomRoutes.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -43,6 +44,7 @@ app.use("/users", userUnauthRoutes);
 // auth routes
 app.use(verifyToken);
 app.use("/users", userAuthRoutes);
+app.use("/chat", chatRoomRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

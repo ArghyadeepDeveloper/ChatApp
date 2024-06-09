@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 const verifyToken = (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1];
 
@@ -12,6 +14,7 @@ const verifyToken = (req, res, next) => {
     req.user = decoded; // Attach the decoded user information to the request object
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: "Invalid token." });
   }
 };

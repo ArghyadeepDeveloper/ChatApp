@@ -20,7 +20,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
-    groups: [{ type: mongoose.Schema.ObjectId, default: [] }],
+    chatRooms: [
+      { type: mongoose.Schema.ObjectId, default: [], ref: "ChatRoom" },
+    ],
   },
   {
     timestamps: {
