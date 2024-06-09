@@ -7,6 +7,7 @@ import { validationError } from "./middlewares/ValidationError.js";
 import dotenv from "dotenv";
 import verifyToken from "./middlewares/verifyToken.js";
 import chatRoomRoutes from "./routes/ChatRoomRoutes.js";
+import Message from "./models/MessageModel.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -20,17 +21,25 @@ connectDB();
 
 // Socket.io connection
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("A user connected");
 
   // Listen for new messages
-  socket.on("chat message", async (msg) => {
+  socket.on("chat message", async ({ text, senderId, chatRoomId }) => {
     try {
-      const message = new Message({ text: msg });
+      const message = new Message({
+        text,
+        sender: senderId,
+        chatRoom: chatRoomId,
+      });
       await message.save();
-      io.emit("chat message", msg); // Broadcast the message to all clients
+      io.emit("chat message", message); // Broadcast the message to all clients
     } catch (error) {
       console.error("Error saving message:", error);
     }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
   });
 });
 
